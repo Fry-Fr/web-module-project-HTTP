@@ -32,14 +32,24 @@ const App = (props) => {
         axios.get('http://localhost:5000/api/movies')
         .then(res => {
             setMovies(res.data)
+            removeFavorite(id)
         })
         .catch(err=>console.log(err))
     })
     .catch(err => console.log(err))
   }
 
+  const removeFavorite = (id) => {
+    id = parseInt(id)
+    const newFavs = favoriteMovies.filter(movie => movie.id !== id);
+    setFavoriteMovies(newFavs)
+  }
+
   const addToFavorites = (movie) => {
-    
+    setFavoriteMovies([
+      ...favoriteMovies,
+      movie
+    ])
   }
 
   return (
@@ -51,7 +61,7 @@ const App = (props) => {
       <div className="container">
         <MovieHeader/>
         <div className="row ">
-          <FavoriteMovieList favoriteMovies={favoriteMovies}/>
+          <FavoriteMovieList favoriteMovies={favoriteMovies} />
         
           <Switch>
             <Route path="/movies/edit/:id">
@@ -63,7 +73,7 @@ const App = (props) => {
             </Route>
 
             <Route path="/movies/:id">
-              <Movie deleteMovie={deleteMovie} />
+              <Movie deleteMovie={deleteMovie} addToFavorites={addToFavorites} />
             </Route>
 
             <Route path="/movies">

@@ -27,6 +27,11 @@ const Movie = (props) => {
         push('/movies')
     }
 
+    const handleAddToFavorites = (event) => {
+        event.stopPropagation();
+        addToFavorites(movie)
+    }
+
     return(<div className="modal-page col">
         <div className="modal-dialog">
             <div className="modal-content">
@@ -56,7 +61,7 @@ const Movie = (props) => {
                         </section>
                         
                         <section>
-                            <span className="m-2 btn btn-dark">Favorite</span>
+                            <span className="m-2 btn btn-dark" onClick={handleAddToFavorites}>Favorite</span>
                             <Link to={`/movies/edit/${movie.id}`} className="m-2 btn btn-success">Edit</Link>
                             <span className="delete"><input onClick={handleDeleteButton} type="button" className="m-2 btn btn-danger" value="Delete"/></span>
                         </section>
