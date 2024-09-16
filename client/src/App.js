@@ -6,6 +6,7 @@ import Movie from './components/Movie';
 
 import MovieHeader from './components/MovieHeader';
 
+import AddMovieForm from './components/AddMovieForm';
 import EditMovieForm from './components/EditMovieForm';
 import FavoriteMovieList from './components/FavoriteMovieList';
 
@@ -26,10 +27,29 @@ const App = (props) => {
   }, []);
 
   const deleteMovie = (id)=> {
+    axios.delete(`http://localhost:5000/api/movies/${id}`)
+    .then(res => {
+        axios.get('http://localhost:5000/api/movies')
+        .then(res => {
+            setMovies(res.data)
+            removeFavorite(id)
+        })
+        .catch(err=>console.log(err))
+    })
+    .catch(err => console.log(err))
+  }
+
+  const removeFavorite = (id) => {
+    id = parseInt(id)
+    const newFavs = favoriteMovies.filter(movie => movie.id !== id);
+    setFavoriteMovies(newFavs)
   }
 
   const addToFavorites = (movie) => {
-    
+    setFavoriteMovies([
+      ...favoriteMovies,
+      movie
+    ])
   }
 
   return (
@@ -41,14 +61,19 @@ const App = (props) => {
       <div className="container">
         <MovieHeader/>
         <div className="row ">
-          <FavoriteMovieList favoriteMovies={favoriteMovies}/>
+          <FavoriteMovieList favoriteMovies={favoriteMovies} />
         
           <Switch>
             <Route path="/movies/edit/:id">
+              <EditMovieForm setMovies={setMovies} />
+            </Route>
+
+            <Route path="/movies/add">
+              <AddMovieForm setMovies={setMovies} />
             </Route>
 
             <Route path="/movies/:id">
-              <Movie/>
+              <Movie deleteMovie={deleteMovie} addToFavorites={addToFavorites} />
             </Route>
 
             <Route path="/movies">
